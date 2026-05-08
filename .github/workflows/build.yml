@@ -5,8 +5,43 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      release_candidate:
+        description: 'Create a release candidate from main'
+        type: boolean
+        default: true
 
 jobs:
+  resolve-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      is_rc: ${{ steps.version.outputs.is_rc }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        run: |
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            RC_NUMBER=$(git tag --list "v${BASE_VERSION}-rc.*" | wc -l | tr -d ' ')
+            RC_NUMBER=$((RC_NUMBER + 1))
+            VERSION="${BASE_VERSION}-rc.${RC_NUMBER}"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "is_rc=true" >> "$GITHUB_OUTPUT"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "is_rc=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Resolved version: ${VERSION}"
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +55,7 @@ jobs:
       - run: npm run build
 
   build:
-    needs: test
+    needs: [test, resolve-version]
     strategy:
       matrix:
         include:
@@ -58,21 +93,74 @@ jobs:
           if-no-files-found: ignore
 
   release:
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, resolve-version]
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
 
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Find the previous tag to generate changelog from
+          CURRENT_TAG="${{ needs.resolve-version.outputs.tag }}"
+          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-v:refname | grep -v "^${CURRENT_TAG}$" | head -n 1)
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "No previous tag found, generating full changelog"
+            RANGE="HEAD"
+          else
+            echo "Generating changelog from ${PREVIOUS_TAG} to HEAD"
+            RANGE="${PREVIOUS_TAG}..HEAD"
+          fi
+
+          {
+            echo 'body<<EOF'
+            echo "## What's Changed"
+            echo ""
+
+            # Features
+            FEATURES=$(git log "$RANGE" --pretty=format:"- %s" --grep="^feat" 2>/dev/null || true)
+            if [ -n "$FEATURES" ]; then
+              echo "### 🚀 Features"
+              echo "$FEATURES"
+              echo ""
+            fi
+
+            # Fixes
+            FIXES=$(git log "$RANGE" --pretty=format:"- %s" --grep="^fix" 2>/dev/null || true)
+            if [ -n "$FIXES" ]; then
+              echo "### 🐛 Bug Fixes"
+              echo "$FIXES"
+              echo ""
+            fi
+
+            # Other changes
+            OTHERS=$(git log "$RANGE" --pretty=format:"- %s" --invert-grep --grep="^feat" --grep="^fix" 2>/dev/null || true)
+            if [ -n "$OTHERS" ]; then
+              echo "### 📦 Other Changes"
+              echo "$OTHERS"
+              echo ""
+            fi
+
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_TAG}...${CURRENT_TAG}"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.resolve-version.outputs.tag }}
+          name: ${{ needs.resolve-version.outputs.is_rc == 'true' && format('Release Candidate {0}', needs.resolve-version.outputs.version) || needs.resolve-version.outputs.version }}
+          body: ${{ steps.changelog.outputs.body }}
+          prerelease: ${{ needs.resolve-version.outputs.is_rc == 'true' }}
           files: artifacts/**/*
-          generate_release_notes: true

@@ -239,16 +239,11 @@ export async function getMarketplacePlugins(
     }
   }
 
-  // Strategy 2: Check installed-plugins/<marketplace>/<plugin>/ for marketplace.json
-  const installedCatalog = await findInstalledMarketplaceJson(marketplaceName);
-  if (installedCatalog) {
-    return mapCatalogPlugins(installedCatalog, marketplaceName, installedNames);
-  }
-
   // Strategy 3: Scan installed-plugins/<marketplace>/ dirs for individual plugin.json files
   const scanned = await scanInstalledPluginDirs(marketplaceName);
 
   // Strategy 4: For github-source marketplaces, fetch catalog from GitHub API
+  // This is preferred over installed catalogs since it has the complete plugin list
   let remoteCatalog: MarketplaceCatalog | null = null;
   if (marketplace.source.repo) {
     remoteCatalog = await fetchMarketplaceFromGitHub(marketplace.source.repo);
@@ -269,6 +264,13 @@ export async function getMarketplacePlugins(
       if (!catalogNames.has(p.name)) mergedPlugins.push(p);
     }
     return mergedPlugins;
+  }
+
+  // Strategy 5: Check installed-plugins/<marketplace>/<plugin>/ for embedded marketplace.json
+  // This is a last resort since installed plugins may bundle partial catalogs
+  const installedCatalog = await findInstalledMarketplaceJson(marketplaceName);
+  if (installedCatalog) {
+    return mapCatalogPlugins(installedCatalog, marketplaceName, installedNames);
   }
 
   return scanned.length > 0 ? scanned : [];

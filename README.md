@@ -1,11 +1,19 @@
-# 🔌 Copilot CLI Plugin Manager
+<p align="center">
+  <img src="public/logo.png" alt="Copilot CLI Plugin Manager" width="128" />
+</p>
 
-A visual plugin manager for [GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli) — browse, install, manage, and explore plugins from any marketplace, all from a web UI or native desktop app.
+<h1 align="center">Copilot CLI Plugin Manager</h1>
 
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Node](https://img.shields.io/badge/node-20%2B-green)
-![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)
-![Tests](https://img.shields.io/badge/tests-83%20passing-brightgreen)
+<p align="center">
+  A visual plugin manager for <a href="https://docs.github.com/copilot/how-tos/copilot-cli">GitHub Copilot CLI</a> — browse, install, manage, and explore plugins from any marketplace, all from a web UI or native desktop app.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
+  <img src="https://img.shields.io/badge/node-20%2B-green" alt="Node" />
+  <img src="https://img.shields.io/badge/typescript-5.x-blue" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/tests-83%20passing-brightgreen" alt="Tests" />
+</p>
 
 ## Why?
 
@@ -30,7 +38,7 @@ This project gives you a **visual interface** for the full plugin lifecycle:
 ### Web App
 
 ```bash
-git clone <repo-url> copilot-cli-plugin-manager
+git clone https://github.com/cohenamitc/copilot-cli-plugin-manager.git
 cd copilot-cli-plugin-manager
 npm install
 npm run dev
@@ -50,14 +58,17 @@ Launches a native window with system tray integration. The backend runs internal
 ### Installed Plugins
 Browse your installed plugins with version badges, component counts (skills, hooks, agents, MCP), and quick actions.
 
-### Plugin Detail
-Drill into any plugin to see its skills, hooks, agents, and MCP servers in a tabbed view.
+![Installed Plugins](docs/screenshots/installed-plugins.png)
 
 ### Marketplace Browser
 Search and filter across all registered marketplaces. Install plugins with one click.
 
-### Theme Support
-Switch between Light, Dark, and Copilot (GitHub dark) themes.
+![Marketplace Browser](docs/screenshots/marketplace-browser.png)
+
+### Plugin Detail
+Drill into any plugin to see its skills, hooks, agents, and MCP servers in a tabbed view.
+
+![Plugin Detail](docs/screenshots/plugin-details.png)
 
 ## Features
 

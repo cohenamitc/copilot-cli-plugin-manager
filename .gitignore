@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+release/
+
+# Electron
+*.dmg
+*.AppImage
+*.deb
+*.snap
+*.exe
+
+# Environment
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript
+*.tsbuildinfo
+
+# Brainstorm sessions
+.superpowers/
+
+# Lock files are kept for reproducibility
+# package-lock.json

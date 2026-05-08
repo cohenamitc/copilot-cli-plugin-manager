@@ -1,0 +1,9 @@
+.themeGroup { display: flex; gap: 12px; margin-top: 8px; }
+.themeOption { padding: 16px 24px; border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; background: var(--color-surface); text-align: center; transition: border-color 0.15s; min-width: 120px; }
+.themeOption:hover { border-color: var(--color-primary); }
+.themeOptionActive { border-color: var(--color-primary); background: var(--color-primary-light); }
+.themeName { font-weight: 600; font-size: 14px; margin-top: 8px; }
+.themePreview { width: 60px; height: 40px; border-radius: var(--radius-sm); margin: 0 auto; border: 1px solid var(--color-border); }
+.section { margin-bottom: 32px; }
+.sectionTitle { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.version { font-size: 13px; color: var(--color-text-secondary); }

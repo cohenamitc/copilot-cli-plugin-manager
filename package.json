@@ -1,0 +1,42 @@
+{
+  "name": "copilot-cli-plugin-manager",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "concurrently \"tsx watch src/server/index.ts\" \"vite\"",
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "start": "node dist/server/index.js",
+    "server:dev": "tsx watch src/server/index.ts",
+    "client:dev": "vite",
+    "desktop": "npm run build && electron src/electron/main.cjs",
+    "desktop:build": "npm run build && electron-builder"
+  },
+  "main": "src/electron/main.cjs",
+  "dependencies": {
+    "@tanstack/react-query": "^5.60.0",
+    "express": "^4.21.0",
+    "lucide-react": "^1.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/supertest": "^7.2.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "concurrently": "^9.1.0",
+    "electron": "^42.0.0",
+    "electron-builder": "^26.8.1",
+    "supertest": "^7.2.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vitest": "^4.1.5"
+  }
+}

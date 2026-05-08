@@ -1,0 +1,6 @@
+.form { max-width: 500px; }
+.field { margin-bottom: 16px; }
+.label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--color-text); }
+.input { width: 100%; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--color-text); font-size: 14px; }
+.input:focus { outline: 2px solid var(--color-primary); outline-offset: -1px; }
+.hint { font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; }

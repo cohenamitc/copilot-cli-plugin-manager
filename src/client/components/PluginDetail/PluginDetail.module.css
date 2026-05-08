@@ -1,0 +1,23 @@
+.header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.icon { width: 56px; height: 56px; border-radius: var(--radius-lg); object-fit: cover; }
+.headerInfo { flex: 1; }
+.headerInfo h1 { font-size: 22px; margin: 0; }
+.headerMeta { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+.headerActions { display: flex; gap: 8px; }
+.description { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 16px; line-height: 1.6; }
+.keywords { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--color-border); margin-bottom: 20px; }
+.tab { padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.1s; }
+.tab:hover { color: var(--color-text); }
+.tabActive { color: var(--color-primary); border-bottom-color: var(--color-primary); font-weight: 600; }
+.componentGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.componentCard { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 12px; background: var(--color-surface); }
+.componentName { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.componentDesc { font-size: 12px; color: var(--color-text-secondary); }
+.backLink { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 16px; cursor: pointer; border: none; background: none; padding: 0; }
+.backLink:hover { color: var(--color-primary); }
+.links { margin-top: 16px; display: flex; gap: 16px; font-size: 13px; }
+.mcpDetail { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.mcpDetail:last-child { margin-bottom: 0; }
+.mcpLabel { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--color-text-tertiary); }
+.mcpCode { font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: 12px; color: var(--color-text); background: var(--color-bg); padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); word-break: break-all; }

@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
-  <img src="https://img.shields.io/badge/node-20%2B-green" alt="Node" />
+  <img src="https://img.shields.io/badge/node-22%2B-green" alt="Node" />
   <img src="https://img.shields.io/badge/typescript-5.x-blue" alt="TypeScript" />
   <img src="https://img.shields.io/badge/tests-83%20passing-brightgreen" alt="Tests" />
 </p>
@@ -31,7 +31,7 @@ This project gives you a **visual interface** for the full plugin lifecycle:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 20+
+- [Node.js](https://nodejs.org/) 22+
 - [GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli) installed and authenticated
 - [GitHub CLI](https://cli.github.com/) (`gh`) authenticated (for browsing private marketplaces)
 
@@ -266,7 +266,7 @@ npm test
 
 | Layer | Technology |
 |-------|-----------|
-| **Runtime** | Node.js 20+ |
+| **Runtime** | Node.js 22+ |
 | **Language** | TypeScript 5.x |
 | **Backend** | Express 4 |
 | **Frontend** | React 19 |

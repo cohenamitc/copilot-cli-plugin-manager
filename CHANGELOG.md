@@ -14,11 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Screenshots and logo in README
 - Changelog
 - Watchdog script (`scripts/watchdog.sh`) to kill runaway Electron processes
+- `justfile` for common dev tasks (`just desktop`, `just package`, `just test`, etc.)
+
+### Changed
+
+- Upgraded to Node.js 22
+- Server binds to `127.0.0.1` only (no external network access) with dynamic port fallback
+- Positioned Electron as the primary app target; web UI retained for development
 
 ### Fixed
 
 - **Critical:** Electron app entered infinite process-spawn loop when launched from packaged DMG — `process.execPath` re-launched the app instead of Node.js; replaced with `utilityProcess.fork()`
 - Single-instance lock prevents duplicate app windows
+- Packaged app resolves server and client assets from asar archive, fixing "connection refused" after DMG install
 - Use `copilot` CLI for plugin install/uninstall/update instead of custom file-ops, fixing installs from URL-based marketplace catalogs
 - Show full remote marketplace catalog when browsing, instead of partial catalog bundled inside installed plugins
 - Prevent electron-builder from auto-publishing during CI build job

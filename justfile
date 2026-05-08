@@ -22,22 +22,34 @@ test:
 test-watch:
     npx vitest
 
-# Package desktop app for distribution (DMG, zip)
+# Package desktop app for distribution
+[macos]
 package: build
     npx electron-builder --mac --publish never
 
-# Package for current arch only (faster)
-package-fast: build
-    npx electron-builder --mac --$(uname -m | sed 's/x86_64/x64/' | sed 's/aarch64/arm64/') --publish never
+[windows]
+package: build
+    npx electron-builder --win --publish never
+
+[linux]
+package: build
+    npx electron-builder --linux --publish never
 
 # Install dependencies
 install:
     npm install
 
 # Clean build artifacts
+[unix]
 clean:
     rm -rf dist release
 
+[windows]
+clean:
+    if exist dist rmdir /s /q dist
+    if exist release rmdir /s /q release
+
 # Run watchdog script (kills app if > N instances detected)
+[unix]
 watchdog max="5" interval="5":
     ./scripts/watchdog.sh {{max}} {{interval}}

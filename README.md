@@ -5,7 +5,7 @@
 <h1 align="center">Copilot CLI Plugin Manager</h1>
 
 <p align="center">
-  A visual plugin manager for <a href="https://docs.github.com/copilot/how-tos/copilot-cli">GitHub Copilot CLI</a> — browse, install, manage, and explore plugins from any marketplace, all from a web UI or native desktop app.
+  A visual plugin manager for <a href="https://docs.github.com/copilot/how-tos/copilot-cli">GitHub Copilot CLI</a> — browse, install, manage, and explore plugins from any marketplace, all from a native desktop app.
 </p>
 
 <p align="center">
@@ -35,23 +35,18 @@ This project gives you a **visual interface** for the full plugin lifecycle:
 - [GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli) installed and authenticated
 - [GitHub CLI](https://cli.github.com/) (`gh`) authenticated (for browsing private marketplaces)
 
-### Web App
+### Desktop App (Electron)
 
 ```bash
 git clone https://github.com/cohenamitc/copilot-cli-plugin-manager.git
 cd copilot-cli-plugin-manager
 npm install
-npm run dev
-# Open http://localhost:5173
-```
-
-### Desktop App (Electron)
-
-```bash
 npm run desktop
 ```
 
 Launches a native window with system tray integration. The backend runs internally — no separate server needed.
+
+> **Development mode:** Run `npm run dev` to start Express + Vite with hot reload at `http://localhost:5173` for faster iteration during development.
 
 ## Screenshots
 
@@ -239,7 +234,7 @@ copilot-cli-plugin-manager/
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start both Express server and Vite dev server with hot reload |
+| `npm run dev` | Start Express + Vite dev server with hot reload (development) |
 | `npm run build` | Build the React SPA and compile server TypeScript |
 | `npm start` | Start the production server (after build) |
 | `npm test` | Run the test suite (83 tests) |

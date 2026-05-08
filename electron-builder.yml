@@ -15,19 +15,9 @@ files:
   - "!src/client/**"
   - "!src/server/**"
   - "!docs/**"
-asarUnpack:
-  - dist/**/*
 extraResources:
   - from: public/
     to: public/
-    filter:
-      - "**/*"
-  - from: dist/server/
-    to: dist/server/
-    filter:
-      - "**/*"
-  - from: dist/client/
-    to: dist/client/
     filter:
       - "**/*"
 mac:

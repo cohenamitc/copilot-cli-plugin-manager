@@ -120,9 +120,12 @@ function waitForServer(port, timeout = 15000) {
 }
 
 function startBackendServer() {
-  const serverScript = app.isPackaged
-    ? path.join(process.resourcesPath, "dist", "server", "index.js")
-    : path.join(__dirname, "..", "..", "dist", "server", "index.js");
+  // In packaged mode, app.getAppPath() points inside the asar archive where
+  // node_modules live, so the server can resolve its dependencies.
+  const appRoot = app.isPackaged
+    ? app.getAppPath()
+    : path.join(__dirname, "..", "..");
+  const serverScript = path.join(appRoot, "dist", "server", "index.js");
 
   // utilityProcess.fork() uses Electron's built-in Node.js runtime,
   // avoiding the infinite-loop bug where process.execPath re-launches the app.

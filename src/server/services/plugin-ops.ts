@@ -18,6 +18,12 @@ const DEFAULT_MARKETPLACES: Record<string, MarketplaceSource> = {
   "awesome-copilot": { source: "github", repo: "github/awesome-copilot" },
 };
 
+function extractGitHubRepo(url: string | undefined): string | null {
+  if (!url) return null;
+  const match = url.match(/github\.com\/([^/]+\/[^/.]+)/);
+  return match ? match[1] : null;
+}
+
 async function fileExists(filePath: string): Promise<boolean> {
   try {
     await access(filePath);
@@ -145,12 +151,13 @@ async function findPluginInCatalog(
   }
 
   // For GitHub marketplaces without local cache, fetch catalog via `gh api`
-  if (marketplace.source.repo) {
+  const repo = marketplace.source.repo ?? extractGitHubRepo(marketplace.source.url);
+  if (repo) {
     try {
       for (const apiPath of [".github/plugin/marketplace.json", ".claude-plugin/marketplace.json"]) {
         try {
           const { stdout } = await execFileAsync("gh", [
-            "api", `repos/${marketplace.source.repo}/contents/${apiPath}`,
+            "api", `repos/${repo}/contents/${apiPath}`,
             "--jq", ".content",
           ], { timeout: 30_000 });
           const decoded = Buffer.from(stdout.trim(), "base64").toString("utf-8");
@@ -225,14 +232,15 @@ async function resolvePluginSource(source: string): Promise<ResolvedPlugin> {
     }
 
     // If marketplace is GitHub, clone it to temp and find the plugin
-    if (marketplace.source.repo) {
+    const marketplaceRepo = marketplace.source.repo ?? extractGitHubRepo(marketplace.source.url);
+    if (marketplaceRepo) {
       const tmpDir = path.join(COPILOT_DIR, "tmp", `clone-${Date.now()}`);
       await mkdir(tmpDir, { recursive: true });
 
+      const cloneUrl = marketplace.source.url ?? `https://github.com/${marketplaceRepo}.git`;
       try {
         await execFileAsync("git", [
-          "clone", "--depth", "1",
-          `https://github.com/${marketplace.source.repo}.git`, tmpDir,
+          "clone", "--depth", "1", cloneUrl, tmpDir,
         ], { timeout: 60_000 });
 
         for (const tryPath of [pluginRelPath, `plugins/${pluginName}`, pluginName]) {

@@ -20,6 +20,10 @@ extraResources:
     to: public/
     filter:
       - "**/*"
+  - from: dist/server/
+    to: dist/server/
+    filter:
+      - "**/*"
 mac:
   category: public.app-category.developer-tools
   icon: build/icon.icns

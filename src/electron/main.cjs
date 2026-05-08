@@ -1,7 +1,13 @@
-const { app, BrowserWindow, Menu, Tray, nativeImage } = require("electron");
+const { app, BrowserWindow, Menu, Tray, nativeImage, utilityProcess } = require("electron");
 const path = require("path");
-const { spawn } = require("child_process");
 const http = require("http");
+
+// Prevent multiple instances — critical to avoid fork-bomb when packaged
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+  return;
+}
 
 let mainWindow = null;
 let tray = null;
@@ -114,11 +120,15 @@ function waitForServer(port, timeout = 15000) {
 }
 
 function startBackendServer() {
-  // Use the precompiled server for cross-platform compatibility
-  const serverScript = path.join(__dirname, "..", "..", "dist", "server", "index.js");
-  serverProcess = spawn(process.execPath, [serverScript], {
+  const serverScript = app.isPackaged
+    ? path.join(process.resourcesPath, "dist", "server", "index.js")
+    : path.join(__dirname, "..", "..", "dist", "server", "index.js");
+
+  // utilityProcess.fork() uses Electron's built-in Node.js runtime,
+  // avoiding the infinite-loop bug where process.execPath re-launches the app.
+  serverProcess = utilityProcess.fork(serverScript, [], {
     env: { ...process.env, PORT: String(serverPort) },
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: "pipe",
   });
 
   serverProcess.stdout.on("data", (data) => {
@@ -131,6 +141,7 @@ function startBackendServer() {
 
   serverProcess.on("exit", (code) => {
     console.log("Server exited with code:", code);
+    serverProcess = null;
     // Auto-restart unless we're quitting
     if (!app.isQuitting) {
       setTimeout(() => startBackendServer(), 2000);
@@ -139,6 +150,14 @@ function startBackendServer() {
 }
 
 app.isQuitting = false;
+
+app.on("second-instance", () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  }
+});
 
 app.whenReady().then(async () => {
   startBackendServer();

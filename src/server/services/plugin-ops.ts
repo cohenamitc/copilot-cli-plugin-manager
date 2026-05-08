@@ -115,7 +115,9 @@ interface ResolvedPlugin {
 interface PluginSourceDef {
   source?: string;
   repo?: string;
+  url?: string;
   path?: string;
+  ref?: string;
 }
 
 // Read the marketplace catalog to find a plugin's source definition
@@ -186,15 +188,28 @@ async function resolvePluginSource(source: string): Promise<ResolvedPlugin> {
     // First, try to read the marketplace catalog to find the plugin's source definition
     const pluginSourceDef = await findPluginInCatalog(pluginName, marketplace);
 
-    // If the plugin has its own repo (e.g., awesome-copilot plugins), clone from there
-    if (pluginSourceDef && typeof pluginSourceDef === "object" && pluginSourceDef.repo) {
+    // If the plugin has its own repo or URL, clone from there
+    if (pluginSourceDef && typeof pluginSourceDef === "object" && (pluginSourceDef.repo || pluginSourceDef.url)) {
       const tmpDir = path.join(COPILOT_DIR, "tmp", `clone-${Date.now()}`);
       await mkdir(tmpDir, { recursive: true });
-      const repoUrl = pluginSourceDef.repo.startsWith("http")
-        ? pluginSourceDef.repo
-        : `https://github.com/${pluginSourceDef.repo}.git`;
+
+      let cloneUrl: string;
+      if (pluginSourceDef.url) {
+        cloneUrl = pluginSourceDef.url;
+      } else if (pluginSourceDef.repo!.startsWith("http")) {
+        cloneUrl = pluginSourceDef.repo!;
+      } else {
+        cloneUrl = `https://github.com/${pluginSourceDef.repo}.git`;
+      }
+
+      const cloneArgs = ["clone", "--depth", "1"];
+      if (pluginSourceDef.ref) {
+        cloneArgs.push("--branch", pluginSourceDef.ref);
+      }
+      cloneArgs.push(cloneUrl, tmpDir);
+
       try {
-        await execFileAsync("git", ["clone", "--depth", "1", repoUrl, tmpDir], { timeout: 60_000 });
+        await execFileAsync("git", cloneArgs, { timeout: 60_000 });
         const pluginPath = pluginSourceDef.path ? path.join(tmpDir, pluginSourceDef.path) : tmpDir;
         if (await fileExists(pluginPath)) {
           return { sourcePath: pluginPath, pluginName, marketplace: marketplaceName, isTemporary: true };

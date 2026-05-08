@@ -43,7 +43,7 @@ vi.mock("../services/plugin-reader.js", () => ({
   getPluginDetails: vi.fn(),
 }));
 
-vi.mock("../services/plugin-ops.js", () => ({
+vi.mock("../services/cli-executor.js", () => ({
   installPlugin: vi.fn(),
   uninstallPlugin: vi.fn(),
   updatePlugin: vi.fn(),
@@ -70,7 +70,7 @@ import {
   installPlugin,
   uninstallPlugin,
   updatePlugin,
-} from "../services/plugin-ops.js";
+} from "../services/cli-executor.js";
 import {
   addMarketplace,
   removeMarketplace,
@@ -239,7 +239,9 @@ describe("API Routes Integration Tests", () => {
       it("returns success on successful uninstall", async () => {
         vi.mocked(uninstallPlugin).mockResolvedValue({
           success: true,
-          message: "Plugin uninstalled",
+          stdout: "Plugin uninstalled",
+          stderr: "",
+          exitCode: 0,
         });
 
         const response = await request(app).delete(
@@ -257,7 +259,9 @@ describe("API Routes Integration Tests", () => {
       it("returns 500 on failed uninstall", async () => {
         vi.mocked(uninstallPlugin).mockResolvedValue({
           success: false,
-          message: "Failed to uninstall",
+          stdout: "",
+          stderr: "Failed to uninstall",
+          exitCode: 1,
         });
 
         const response = await request(app).delete(
@@ -285,7 +289,9 @@ describe("API Routes Integration Tests", () => {
       it("returns success on successful install", async () => {
         vi.mocked(installPlugin).mockResolvedValue({
           success: true,
-          message: "Plugin installed successfully",
+          stdout: "Plugin installed successfully",
+          stderr: "",
+          exitCode: 0,
         });
 
         const response = await request(app)
@@ -303,7 +309,9 @@ describe("API Routes Integration Tests", () => {
       it("returns 500 on failed install", async () => {
         vi.mocked(installPlugin).mockResolvedValue({
           success: false,
-          message: "Failed to install plugin",
+          stdout: "",
+          stderr: "Failed to install plugin",
+          exitCode: 1,
         });
 
         const response = await request(app)
@@ -322,7 +330,9 @@ describe("API Routes Integration Tests", () => {
       it("returns success on successful update", async () => {
         vi.mocked(updatePlugin).mockResolvedValue({
           success: true,
-          message: "Plugin updated successfully",
+          stdout: "Plugin updated successfully",
+          stderr: "",
+          exitCode: 0,
         });
 
         const response = await request(app).post(
@@ -340,7 +350,9 @@ describe("API Routes Integration Tests", () => {
       it("returns 500 on failed update", async () => {
         vi.mocked(updatePlugin).mockResolvedValue({
           success: false,
-          message: "Failed to update plugin",
+          stdout: "",
+          stderr: "Failed to update plugin",
+          exitCode: 1,
         });
 
         const response = await request(app).post(

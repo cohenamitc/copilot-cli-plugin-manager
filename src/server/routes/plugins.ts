@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getInstalledPlugins, getPluginDetails } from "../services/plugin-reader.js";
-import { installPlugin, uninstallPlugin, updatePlugin } from "../services/plugin-ops.js";
+import { installPlugin, uninstallPlugin, updatePlugin } from "../services/cli-executor.js";
 
 const router = Router();
 
@@ -57,9 +57,9 @@ router.post("/install", async (req, res) => {
 
   const result = await installPlugin(source);
   if (result.success) {
-    res.json({ success: true, message: result.message });
+    res.json({ success: true, message: result.stdout || `Plugin installed successfully` });
   } else {
-    res.status(500).json({ success: false, error: result.message });
+    res.status(500).json({ success: false, error: result.stderr || result.stdout || "Install failed" });
   }
 });
 
@@ -67,9 +67,9 @@ router.delete("/:name", async (req, res) => {
   const pluginName = req.params.name;
   const result = await uninstallPlugin(pluginName);
   if (result.success) {
-    res.json({ success: true, message: result.message });
+    res.json({ success: true, message: result.stdout || `Plugin uninstalled successfully` });
   } else {
-    res.status(500).json({ success: false, error: result.message });
+    res.status(500).json({ success: false, error: result.stderr || result.stdout || "Uninstall failed" });
   }
 });
 
@@ -77,9 +77,9 @@ router.post("/:name/update", async (req, res) => {
   const pluginName = req.params.name;
   const result = await updatePlugin(pluginName);
   if (result.success) {
-    res.json({ success: true, message: result.message });
+    res.json({ success: true, message: result.stdout || `Plugin updated successfully` });
   } else {
-    res.status(500).json({ success: false, error: result.message });
+    res.status(500).json({ success: false, error: result.stderr || result.stdout || "Update failed" });
   }
 });
 

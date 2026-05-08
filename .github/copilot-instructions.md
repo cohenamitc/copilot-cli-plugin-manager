@@ -71,3 +71,9 @@ This is a visual plugin manager for GitHub Copilot CLI, running as both a web ap
 3. GitHub API fetch (for remote catalogs — this is the primary source for most marketplaces)
 4. Embedded `marketplace.json` inside installed plugins (last resort, may be partial)
 5. Scan installed plugin directories
+
+### Changelog
+
+This project maintains a `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/) format. When making changes:
+- Add entries under the `[Unreleased]` section, grouped by `Added`, `Changed`, `Fixed`, or `Removed`.
+- When a version is released, the `[Unreleased]` section is moved under a versioned heading (e.g., `[0.2.0] - 2026-05-10`).

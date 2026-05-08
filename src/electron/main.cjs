@@ -12,7 +12,7 @@ if (!gotLock) {
 let mainWindow = null;
 let tray = null;
 let serverProcess = null;
-const serverPort = 3200;
+let serverPort = 3200; // default, updated dynamically from server
 
 function createWindow() {
   const appIcon = nativeImage.createFromPath(
@@ -129,6 +129,14 @@ function startBackendServer() {
   serverProcess = utilityProcess.fork(serverScript, [], {
     env: { ...process.env, PORT: String(serverPort) },
     stdio: "pipe",
+  });
+
+  // Receive the actual port from the server (may differ if preferred was busy)
+  serverProcess.on("message", (msg) => {
+    if (msg && msg.type === "server-port") {
+      serverPort = msg.port;
+      console.log(`Server reported port: ${serverPort}`);
+    }
   });
 
   serverProcess.stdout.on("data", (data) => {

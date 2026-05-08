@@ -43,13 +43,13 @@ app.get("*", (_req, res) => {
 async function findFreePort(preferred: number): Promise<number> {
   return new Promise((resolve) => {
     const server = createServer();
-    server.listen(preferred, () => {
+    server.listen(preferred, "127.0.0.1", () => {
       server.close(() => resolve(preferred));
     });
     server.on("error", () => {
       // Preferred port busy, find a random free one
       const server2 = createServer();
-      server2.listen(0, () => {
+      server2.listen(0, "127.0.0.1", () => {
         const port = (server2.address() as { port: number }).port;
         server2.close(() => resolve(port));
       });
@@ -60,8 +60,13 @@ async function findFreePort(preferred: number): Promise<number> {
 export async function startServer(preferredPort = 3200): Promise<number> {
   const port = await findFreePort(preferredPort);
   return new Promise((resolve) => {
-    app.listen(port, () => {
+    app.listen(port, "127.0.0.1", () => {
       console.log(`🔌 Plugin Manager running at http://localhost:${port}`);
+      // Notify parent process (Electron main) of the actual port
+      const parentPort = (process as unknown as { parentPort?: { postMessage: (msg: unknown) => void } }).parentPort;
+      if (parentPort) {
+        parentPort.postMessage({ type: "server-port", port });
+      }
       resolve(port);
     });
   });

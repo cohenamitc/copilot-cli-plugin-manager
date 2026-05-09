@@ -1,7 +1,22 @@
 import { execFile, spawn } from "child_process";
+import { existsSync } from "fs";
+import os from "os";
+import path from "path";
 import type { CliResult } from "../types.js";
 
-const COPILOT_BIN = "copilot";
+function findCopilotBin(): string {
+  const searchPaths = [
+    "/opt/homebrew/bin/copilot",                          // macOS ARM Homebrew
+    "/usr/local/bin/copilot",                             // macOS Intel Homebrew / Linux
+    path.join(os.homedir(), ".local", "bin", "copilot"),  // User-local install
+  ];
+  for (const p of searchPaths) {
+    if (existsSync(p)) return p;
+  }
+  return "copilot"; // fallback to PATH lookup
+}
+
+const COPILOT_BIN = findCopilotBin();
 
 export function runCliCommand(args: string[]): Promise<CliResult> {
   return new Promise((resolve) => {

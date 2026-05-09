@@ -6,6 +6,10 @@ vi.mock("child_process", () => ({
   spawn: vi.fn(),
 }));
 
+vi.mock("fs", () => ({
+  existsSync: vi.fn().mockReturnValue(false),
+}));
+
 import { execFile, spawn } from "child_process";
 import {
   runCliCommand,

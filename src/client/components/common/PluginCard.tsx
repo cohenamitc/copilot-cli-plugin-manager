@@ -8,6 +8,7 @@ interface PluginCardProps {
   description?: string;
   marketplace: string;
   installed?: boolean;
+  disabled?: boolean;
   skillCount?: number;
   agentCount?: number;
   hookCount?: number;
@@ -15,6 +16,8 @@ interface PluginCardProps {
   onInstall?: () => void;
   onUninstall?: () => void;
   onUpdate?: () => void;
+  onDisable?: () => void;
+  onEnable?: () => void;
   isLoading?: boolean;
 }
 
@@ -24,6 +27,7 @@ export default function PluginCard({
   description,
   marketplace,
   installed = true,
+  disabled = false,
   skillCount = 0,
   agentCount = 0,
   hookCount = 0,
@@ -31,18 +35,21 @@ export default function PluginCard({
   onInstall,
   onUninstall,
   onUpdate,
+  onDisable,
+  onEnable,
   isLoading,
 }: PluginCardProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (installed) navigate(`/plugins/${encodeURIComponent(name)}`);
+    if (installed && !disabled) navigate(`/plugins/${encodeURIComponent(name)}`);
   };
 
   return (
-    <div className={styles.pluginCard} onClick={handleClick}>
+    <div className={`${styles.pluginCard} ${disabled ? styles.pluginCardDisabled : ""}`} onClick={handleClick}>
       <div className={styles.cardHeader}>
         <span className={styles.cardName}>{name}</span>
+        {disabled && <Badge variant="warning">Disabled</Badge>}
         {version && <Badge variant="success">v{version}</Badge>}
       </div>
       <div className={styles.cardDescription}>
@@ -65,7 +72,25 @@ export default function PluginCard({
         className={styles.cardActions}
         onClick={(e) => e.stopPropagation()}
       >
-        {installed && onUpdate && (
+        {disabled && onEnable && (
+          <button
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            onClick={onEnable}
+            disabled={isLoading}
+          >
+            Enable
+          </button>
+        )}
+        {installed && !disabled && onDisable && (
+          <button
+            className={`${styles.btn} ${styles.btnOutline}`}
+            onClick={onDisable}
+            disabled={isLoading}
+          >
+            Disable
+          </button>
+        )}
+        {installed && !disabled && onUpdate && (
           <button
             className={`${styles.btn} ${styles.btnOutline}`}
             onClick={onUpdate}
@@ -74,7 +99,7 @@ export default function PluginCard({
             Update
           </button>
         )}
-        {installed && onUninstall && (
+        {installed && !disabled && onUninstall && (
           <button
             className={`${styles.btn} ${styles.btnDanger}`}
             onClick={onUninstall}
@@ -83,7 +108,7 @@ export default function PluginCard({
             Remove
           </button>
         )}
-        {!installed && onInstall && (
+        {!installed && !disabled && onInstall && (
           <button
             className={`${styles.btn} ${styles.btnPrimary}`}
             onClick={onInstall}

@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { ToastProvider } from "./components/common/Toast";
+import { useSettings } from "./hooks/useSettings";
 import Layout from "./components/Layout/Layout";
 import PluginList from "./components/PluginList/PluginList";
 import PluginDetail from "./components/PluginDetail/PluginDetail";
@@ -10,6 +11,8 @@ import Updates from "./components/Updates/Updates";
 import Settings from "./components/Settings/Settings";
 
 export default function App() {
+  useSettings();
+
   return (
     <ToastProvider>
       <Routes>

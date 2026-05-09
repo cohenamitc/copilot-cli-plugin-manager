@@ -147,6 +147,17 @@
   transform: translateY(-1px);
 }
 
+.pluginCardDisabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pluginCardDisabled:hover {
+  box-shadow: none;
+  border-color: var(--color-border);
+  transform: none;
+}
+
 .cardHeader {
   display: flex;
   justify-content: space-between;

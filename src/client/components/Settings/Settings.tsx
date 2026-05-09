@@ -32,7 +32,7 @@ export default function Settings() {
       </div>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>About</div>
-        <div className={styles.version}>Copilot CLI Plugin Manager v0.1.0</div>
+        <div className={styles.version}>Copilot CLI Plugin Manager v{__APP_VERSION__}</div>
         <div className={styles.version}>Requires: copilot CLI in PATH</div>
       </div>
     </>

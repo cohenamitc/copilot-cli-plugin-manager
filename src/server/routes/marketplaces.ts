@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getMarketplaces, getMarketplacePlugins, browseAllMarketplaces } from "../services/marketplace-reader.js";
 import { addMarketplace, removeMarketplace, refreshMarketplaces } from "../services/marketplace-ops.js";
+import { getDisabledPlugins } from "../services/disabled-registry.js";
 
 const router = Router();
 
@@ -30,7 +31,15 @@ router.get("/browse", async (req, res) => {
       );
     }
 
-    res.json(plugins);
+    // Annotate disabled plugins
+    const disabled = await getDisabledPlugins();
+    const disabledNames = new Set(disabled.map((d) => d.name));
+    const annotated = plugins.map((p) => ({
+      ...p,
+      disabled: disabledNames.has(p.name),
+    }));
+
+    res.json(annotated);
   } catch (error) {
     res.status(500).json({ error: "Failed to browse marketplace plugins" });
   }

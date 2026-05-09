@@ -34,8 +34,9 @@ This is a visual plugin manager for GitHub Copilot CLI, running as both a web ap
 
 ### Electron
 
-- `src/electron/main.cjs` spawns the compiled server (`dist/server/index.js`) as a child process.
-- Waits for the server to respond on `/api/settings` before opening the BrowserWindow.
+- `src/electron/main.cjs` uses `utilityProcess.fork()` to run the compiled server (`dist/server/index.js`).
+- Uses `app.requestSingleInstanceLock()` to prevent multiple instances.
+- Server reports its port via `parentPort.postMessage()`, main process waits for it before opening the BrowserWindow.
 - Auto-restarts the server on crash unless the app is quitting.
 
 ## Key Conventions
@@ -77,3 +78,11 @@ This is a visual plugin manager for GitHub Copilot CLI, running as both a web ap
 This project maintains a `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/) format. When making changes:
 - Add entries under the `[Unreleased]` section, grouped by `Added`, `Changed`, `Fixed`, or `Removed`.
 - When a version is released, the `[Unreleased]` section is moved under a versioned heading (e.g., `[0.2.0] - 2026-05-10`).
+
+### Issue tracking
+
+All tasks, bugs, and feature suggestions must be tracked as GitHub issues in this repository.
+- Create a GitHub issue **before** (or at the start of) working on any bug fix or feature.
+- Close issues with a comment summarizing the fix when the work is done.
+- Use labels: `bug` for defects, `enhancement` for features.
+- Reference issue numbers in commit messages when applicable (e.g., `fix: resolve theme persistence (#4)`).

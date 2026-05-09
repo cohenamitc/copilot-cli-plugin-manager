@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowUpCircle, Trash2, Globe, FolderGit2, ArrowLeft } from "lucide-react";
-import { usePluginDetails, useUninstallPlugin, useUpdatePlugin } from "../../hooks/usePlugins";
+import { ArrowUpCircle, Trash2, Globe, FolderGit2, ArrowLeft, Power } from "lucide-react";
+import { usePluginDetails, useUninstallPlugin, useUpdatePlugin, useDisablePlugin } from "../../hooks/usePlugins";
 import { useToast } from "../common/Toast";
 import Badge from "../common/Badge";
 import SkillsTab from "./SkillsTab";
@@ -19,6 +19,7 @@ export default function PluginDetail() {
   const { data: plugin, isLoading, error } = usePluginDetails(name ?? "");
   const uninstall = useUninstallPlugin();
   const update = useUpdatePlugin();
+  const disable = useDisablePlugin();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<TabId>("overview");
 
@@ -52,6 +53,16 @@ export default function PluginDetail() {
     }
   };
 
+  const handleDisable = async () => {
+    try {
+      await disable.mutateAsync(plugin.name);
+      showToast(`${plugin.name} disabled`, "success");
+      navigate("/");
+    } catch (e) {
+      showToast(`Failed: ${(e as Error).message}`, "error");
+    }
+  };
+
   return (
     <>
       <button className={styles.backLink} onClick={() => navigate(-1)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14} /> Back</button>
@@ -66,6 +77,7 @@ export default function PluginDetail() {
           </div>
         </div>
         <div className={styles.headerActions}>
+          <button className={`${commonStyles.btn} ${commonStyles.btnOutline}`} onClick={handleDisable} disabled={disable.isPending} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Power size={14} /> Disable</button>
           <button className={`${commonStyles.btn} ${commonStyles.btnOutline}`} onClick={handleUpdate} disabled={update.isPending} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><ArrowUpCircle size={14} /> Update</button>
           <button className={`${commonStyles.btn} ${commonStyles.btnDanger}`} onClick={handleUninstall} disabled={uninstall.isPending} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Trash2 size={14} /> Remove</button>
         </div>

@@ -69,3 +69,35 @@ export function useUpdatePlugin() {
     },
   });
 }
+
+export function useDisablePlugin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (name: string) => {
+      return fetchJson(`/api/plugins/${encodeURIComponent(name)}/disable`, {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["plugins"] });
+      queryClient.invalidateQueries({ queryKey: ["marketplace-browse"] });
+      queryClient.invalidateQueries({ queryKey: ["plugin-details"] });
+    },
+  });
+}
+
+export function useEnablePlugin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (name: string) => {
+      return fetchJson(`/api/plugins/${encodeURIComponent(name)}/enable`, {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["plugins"] });
+      queryClient.invalidateQueries({ queryKey: ["marketplace-browse"] });
+      queryClient.invalidateQueries({ queryKey: ["plugin-details"] });
+    },
+  });
+}

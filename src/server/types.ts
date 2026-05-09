@@ -85,3 +85,16 @@ export interface CliResult {
 export interface AppSettings {
   theme: "light" | "dark" | "copilot";
 }
+
+export interface DisabledPlugin {
+  name: string;
+  marketplace: string;
+  source: string;
+  version?: string;
+  description?: string;
+  disabledAt: string;
+  skillCount: number;
+  agentCount: number;
+  hookCount: number;
+  mcpCount: number;
+}

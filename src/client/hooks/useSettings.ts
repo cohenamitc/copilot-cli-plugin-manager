@@ -14,7 +14,8 @@ export function useSettings() {
   const { data: settings } = useQuery<AppSettings>({
     queryKey: ["settings"],
     queryFn: () => fetchJson("/api/settings"),
-    initialData: { theme: (localStorage.getItem("theme") as Theme) ?? "light" },
+    staleTime: Infinity,
+    placeholderData: { theme: (localStorage.getItem("theme") as Theme) ?? "light" },
   });
 
   const mutation = useMutation({

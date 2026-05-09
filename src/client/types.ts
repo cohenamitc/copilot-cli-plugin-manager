@@ -9,6 +9,7 @@ export interface InstalledPlugin {
   version?: string;
   installed_at: string;
   enabled: boolean;
+  disabled: boolean;
   description?: string;
   author?: PluginAuthor;
   keywords?: string[];
@@ -62,6 +63,7 @@ export interface MarketplacePlugin {
   keywords?: string[];
   category?: string;
   installed: boolean;
+  disabled?: boolean;
 }
 
 export type Theme = "light" | "dark" | "copilot";

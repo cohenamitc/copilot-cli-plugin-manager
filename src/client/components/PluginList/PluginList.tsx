@@ -1,5 +1,5 @@
 import { Package } from "lucide-react";
-import { useInstalledPlugins, useUninstallPlugin, useUpdatePlugin } from "../../hooks/usePlugins";
+import { useInstalledPlugins, useUninstallPlugin, useUpdatePlugin, useDisablePlugin, useEnablePlugin } from "../../hooks/usePlugins";
 import { useToast } from "../common/Toast";
 import PluginCard from "../common/PluginCard";
 import EmptyState from "../common/EmptyState";
@@ -10,6 +10,8 @@ export default function PluginList() {
   const { data: plugins, isLoading, error } = useInstalledPlugins();
   const uninstall = useUninstallPlugin();
   const update = useUpdatePlugin();
+  const disable = useDisablePlugin();
+  const enable = useEnablePlugin();
   const { showToast } = useToast();
 
   if (isLoading) return <div>Loading plugins...</div>;
@@ -41,12 +43,38 @@ export default function PluginList() {
     }
   };
 
+  const handleDisable = async (name: string) => {
+    try {
+      await disable.mutateAsync(name);
+      showToast(`${name} disabled`, "success");
+    } catch (e) {
+      showToast(`Failed to disable ${name}: ${(e as Error).message}`, "error");
+    }
+  };
+
+  const handleEnable = async (name: string) => {
+    try {
+      await enable.mutateAsync(name);
+      showToast(`${name} enabled`, "success");
+    } catch (e) {
+      showToast(`Failed to enable ${name}: ${(e as Error).message}`, "error");
+    }
+  };
+
+  const activePlugins = plugins.filter((p) => !p.disabled);
+  const disabledPlugins = plugins.filter((p) => p.disabled);
+  const totalCount = plugins.length;
+  const disabledCount = disabledPlugins.length;
+
   return (
     <>
       <h1 className={layoutStyles.pageTitle}>Installed Plugins</h1>
-      <p className={layoutStyles.pageSubtitle}>{plugins.length} plugin{plugins.length !== 1 ? "s" : ""} installed</p>
+      <p className={layoutStyles.pageSubtitle}>
+        {totalCount} plugin{totalCount !== 1 ? "s" : ""}
+        {disabledCount > 0 && ` (${disabledCount} disabled)`}
+      </p>
       <div className={styles.grid}>
-        {plugins.map((plugin) => (
+        {activePlugins.map((plugin) => (
           <PluginCard
             key={plugin.name}
             name={plugin.name}
@@ -59,7 +87,24 @@ export default function PluginList() {
             mcpCount={plugin.mcpCount}
             onUninstall={() => handleUninstall(plugin.name)}
             onUpdate={() => handleUpdate(plugin.name)}
-            isLoading={uninstall.isPending || update.isPending}
+            onDisable={() => handleDisable(plugin.name)}
+            isLoading={uninstall.isPending || update.isPending || disable.isPending || enable.isPending}
+          />
+        ))}
+        {disabledPlugins.map((plugin) => (
+          <PluginCard
+            key={plugin.name}
+            name={plugin.name}
+            version={plugin.version}
+            description={plugin.description}
+            marketplace={plugin.marketplace}
+            disabled
+            skillCount={plugin.skillCount}
+            agentCount={plugin.agentCount}
+            hookCount={plugin.hookCount}
+            mcpCount={plugin.mcpCount}
+            onEnable={() => handleEnable(plugin.name)}
+            isLoading={uninstall.isPending || update.isPending || disable.isPending || enable.isPending}
           />
         ))}
       </div>

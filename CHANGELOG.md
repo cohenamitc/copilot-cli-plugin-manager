@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Plugin disable/enable support — disable uninstalls a plugin but remembers it; enable reinstalls from the saved marketplace source (#1)
+- Disabled plugins shown in plugin list (dimmed, with "Disabled" badge) and marketplace browser
+- `disabled-registry` service for persisting disabled plugin state
+- App version on Settings page now dynamically sourced from package.json (#2)
+- Issue tracking directive in copilot-instructions.md
+
+### Fixed
+
+- Theme selection button text invisible in dark/copilot themes (#3)
+- Theme selection not persisting across app restarts — moved settings fetch to App root (#4)
+
 ## [0.1.1] - 2026-05-09
 
 ### Added

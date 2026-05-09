@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Package, Search } from "lucide-react";
 import { useBrowsePlugins, useMarketplaces, useRefreshMarketplaces } from "../../hooks/useMarketplaces";
-import { useInstallPlugin } from "../../hooks/usePlugins";
+import { useInstallPlugin, useEnablePlugin } from "../../hooks/usePlugins";
 import { useToast } from "../common/Toast";
 import PluginCard from "../common/PluginCard";
 import SearchBar from "../common/SearchBar";
@@ -16,6 +16,7 @@ export default function MarketplaceBrowser() {
   const { data: plugins, isLoading, refetch } = useBrowsePlugins(search || undefined, marketplaceFilter || undefined);
   const { data: marketplaces } = useMarketplaces();
   const install = useInstallPlugin();
+  const enable = useEnablePlugin();
   const refresh = useRefreshMarketplaces();
   const { showToast } = useToast();
 
@@ -30,6 +31,15 @@ export default function MarketplaceBrowser() {
       showToast(`${pluginName} installed`, "success");
     } catch (e) {
       showToast(`Failed to install ${pluginName}: ${(e as Error).message}`, "error");
+    }
+  };
+
+  const handleEnable = async (pluginName: string) => {
+    try {
+      await enable.mutateAsync(pluginName);
+      showToast(`${pluginName} enabled`, "success");
+    } catch (e) {
+      showToast(`Failed to enable ${pluginName}: ${(e as Error).message}`, "error");
     }
   };
 
@@ -96,10 +106,11 @@ export default function MarketplaceBrowser() {
               name={plugin.name} version={plugin.version}
               description={plugin.description} marketplace={plugin.marketplace}
               installed={plugin.installed}
-              onInstall={plugin.installed ? undefined : () => handleInstall(plugin.name, plugin.marketplace)}
-              isLoading={install.isPending}
-            />
-          ))}
+              disabled={plugin.disabled}
+              onInstall={plugin.installed || plugin.disabled ? undefined : () => handleInstall(plugin.name, plugin.marketplace)}
+              onEnable={plugin.disabled ? () => handleEnable(plugin.name) : undefined}
+              isLoading={install.isPending || enable.isPending}
+            />))}
         </div>
       )}
     </>

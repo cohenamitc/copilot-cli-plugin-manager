@@ -3,11 +3,11 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import os from "os";
+import { COPILOT_BIN } from "./bin-resolver.js";
 
 const execFileAsync = promisify(execFile);
 
 const COPILOT_DIR = path.join(os.homedir(), ".copilot");
-const COPILOT_BIN = "copilot";
 const SETTINGS_PATH = path.join(COPILOT_DIR, "settings.json");
 const MARKETPLACE_CACHE_DIR = path.join(COPILOT_DIR, "marketplace-cache");
 

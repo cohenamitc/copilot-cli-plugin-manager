@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Theme selection button text invisible in dark/copilot themes (#3)
 - Theme selection not persisting across app restarts — moved settings fetch to App root (#4)
 - CLI operations (install/uninstall/disable/enable) fail when app launched from Finder due to missing PATH (#5)
+- Marketplace browse/fetch fails in packaged app — `gh` and `copilot` binaries not resolved outside cli-executor (#9)
+- Marketplace catalog not found when `marketplace.json` is at repository root (#10)
 
 ## [0.1.1] - 2026-05-09
 

@@ -6,8 +6,8 @@ vi.mock("child_process", () => ({
   spawn: vi.fn(),
 }));
 
-vi.mock("fs", () => ({
-  existsSync: vi.fn().mockReturnValue(false),
+vi.mock("./bin-resolver.js", () => ({
+  COPILOT_BIN: "copilot",
 }));
 
 import { execFile, spawn } from "child_process";

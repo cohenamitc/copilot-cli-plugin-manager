@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-10
+
 ### Added
 
 - Plugin disable/enable support — disable uninstalls a plugin but remembers it; enable reinstalls from the saved marketplace source (#1)

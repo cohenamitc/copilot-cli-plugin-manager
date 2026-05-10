@@ -71,7 +71,7 @@ async function createConfigJson(installedPlugins: Array<{ name: string }>) {
 
 async function createMarketplaceCache(
   cacheDirName: string,
-  location: "github" | "claude",
+  location: "github" | "claude" | "root",
   catalog: Record<string, unknown>
 ) {
   const basePath = path.join(
@@ -83,7 +83,9 @@ async function createMarketplaceCache(
   const subPath =
     location === "github"
       ? path.join(basePath, ".github", "plugin")
-      : path.join(basePath, ".claude-plugin");
+      : location === "claude"
+        ? path.join(basePath, ".claude-plugin")
+        : basePath;
 
   await mkdir(subPath, { recursive: true });
   await writeFile(
@@ -239,6 +241,30 @@ describe("getMarketplacePlugins", () => {
       name: "claude-plugin",
       description: "A Claude plugin",
       version: "2.0.0",
+      marketplace: "awesome-copilot",
+    });
+  });
+
+  it("falls back to root-level marketplace.json", async () => {
+    await createMarketplaceCache("github-awesome-copilot", "root", {
+      name: "awesome-copilot",
+      plugins: [
+        {
+          name: "root-plugin",
+          description: "A root-level catalog plugin",
+          version: "1.0.0",
+          source: "plugins/root-plugin",
+        },
+      ],
+    });
+
+    const plugins = await getMarketplacePlugins("awesome-copilot");
+
+    expect(plugins).toHaveLength(1);
+    expect(plugins[0]).toMatchObject({
+      name: "root-plugin",
+      description: "A root-level catalog plugin",
+      version: "1.0.0",
       marketplace: "awesome-copilot",
     });
   });

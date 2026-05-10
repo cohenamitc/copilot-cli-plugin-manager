@@ -101,14 +101,14 @@ async function findCacheDir(marketplace: MarketplaceInfo): Promise<string | null
 }
 
 async function findMarketplaceJson(cacheDir: string): Promise<MarketplaceCatalog | null> {
-  const githubPath = path.join(cacheDir, ".github", "plugin", "marketplace.json");
-  const claudePath = path.join(cacheDir, ".claude-plugin", "marketplace.json");
+  const candidates = [
+    path.join(cacheDir, ".github", "plugin", "marketplace.json"),
+    path.join(cacheDir, ".claude-plugin", "marketplace.json"),
+    path.join(cacheDir, "marketplace.json"),
+  ];
 
-  if (await fileExists(githubPath)) {
-    return readJsonFile<MarketplaceCatalog>(githubPath);
-  }
-  if (await fileExists(claudePath)) {
-    return readJsonFile<MarketplaceCatalog>(claudePath);
+  for (const p of candidates) {
+    if (await fileExists(p)) return readJsonFile<MarketplaceCatalog>(p);
   }
   return null;
 }
@@ -192,6 +192,7 @@ async function fetchMarketplaceFromGitHub(repo: string): Promise<MarketplaceCata
   const paths = [
     `.github/plugin/marketplace.json`,
     `.claude-plugin/marketplace.json`,
+    `marketplace.json`,
   ];
 
   for (const filePath of paths) {

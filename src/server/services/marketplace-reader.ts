@@ -186,6 +186,7 @@ function mapCatalogPlugins(
 async function fetchMarketplaceFromGitHub(repo: string): Promise<MarketplaceCatalog | null> {
   const { execFile } = await import("child_process");
   const { promisify } = await import("util");
+  const { GH_BIN } = await import("./bin-resolver.js");
   const execFileAsync = promisify(execFile);
 
   const paths = [
@@ -195,7 +196,7 @@ async function fetchMarketplaceFromGitHub(repo: string): Promise<MarketplaceCata
 
   for (const filePath of paths) {
     try {
-      const { stdout } = await execFileAsync("gh", [
+      const { stdout } = await execFileAsync(GH_BIN, [
         "api",
         `repos/${repo}/contents/${filePath}`,
         "--jq", ".content",
